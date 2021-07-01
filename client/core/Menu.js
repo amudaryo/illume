@@ -12,8 +12,8 @@ import { Link, withRouter } from "react-router-dom";
 const useStyles = makeStyles((theme) => ({
   cursive: {
     fontFamily: "Yellowtail",
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2),
+    paddingLeft: theme.spacing(1),
+    paddingRight: theme.spacing(1),
   },
 }));
 
@@ -27,7 +27,7 @@ const Menu = withRouter(({ history }) => {
   return (
     <AppBar position="static">
       <Toolbar>
-        <Typography variant="h4" color="inherit" className={classes.cursive}>
+        <Typography variant="h5" color="inherit" className={classes.cursive}>
           Illume
         </Typography>
         <Link to="/">
@@ -36,15 +36,21 @@ const Menu = withRouter(({ history }) => {
           </IconButton>
         </Link>
         <Link to="/users">
-          <Button style={isActive(history, "/users")}>Users</Button>
+          <Button size="small" style={isActive(history, "/users")}>
+            Users
+          </Button>
         </Link>
         {!auth.isAuthenticated() && (
           <span>
             <Link to="/signup">
-              <Button style={isActive(history, "/signup")}>Sign up</Button>
+              <Button size="small" style={isActive(history, "/signup")}>
+                Sign up
+              </Button>
             </Link>
             <Link to="/signin">
-              <Button style={isActive(history, "/signin")}>Sign In</Button>
+              <Button size="small" style={isActive(history, "/signin")}>
+                Sign In
+              </Button>
             </Link>
           </span>
         )}
