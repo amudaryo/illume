@@ -1,22 +1,6 @@
-import Test from '../models/test.model';
+import Goal from '../models/goal.model';
 import errorHandler from './../helpers/dbErrorHandler';
 import formidable from 'formidable';
-
-// const create = async (req, res) => {
-//   console.log(req.body);
-//   try {
-//     req.body.createdBy = req.auth._id;
-//     const test = new Test(req.body);
-//     await test.save();
-//     return res.status(200).json({
-//       message: 'test created!',
-//     });
-//   } catch (err) {
-//     return res.status(400).json({
-//       error: errorHandler.getErrorMessage(err),
-//     });
-//   }
-// };
 
 const create = (req, res, next) => {
   let form = new formidable.IncomingForm();
@@ -27,11 +11,10 @@ const create = (req, res, next) => {
         error: 'Image could not be uploaded',
       });
     }
-    console.log(fields);
-    let test = new Test(fields);
-    test.createdBy = req.profile;
+    let goal = new Goal(fields);
+    goal.createdBy = req.profile;
     try {
-      let result = await test.save();
+      let result = await goal.save();
       res.json(result);
     } catch (err) {
       return res.status(400).json({
@@ -41,27 +24,27 @@ const create = (req, res, next) => {
   });
 };
 
-const testByID = async (req, res, next, id) => {
+const goalByID = async (req, res, next, id) => {
   try {
-    let test = await Test.findById(id).populate('createdBy', '_id name').exec();
-    if (!test)
+    let goal = await Goal.findById(id).populate('createdBy', '_id name').exec();
+    if (!goal)
       return res.status('400').json({
-        error: 'Test not found',
+        error: 'Goal not found',
       });
-    req.test = test;
+    req.goal = goal;
     next();
   } catch (err) {
     return res.status('400').json({
-      error: 'Could not retrieve test',
+      error: 'Could not retrieve goal',
     });
   }
 };
 
 const remove = async (req, res) => {
-  let test = req.test;
+  let goal = req.goal;
   try {
-    let deletedTest = await test.remove();
-    res.json(deletedTest);
+    let deletedGoal = await goal.remove();
+    res.json(deletedGoal);
   } catch (err) {
     return res.status(400).json({
       error: errorHandler.getErrorMessage(err),
@@ -71,7 +54,7 @@ const remove = async (req, res) => {
 
 const hasAuthorization = (req, res, next) => {
   let hasAuthorization =
-    req.test && req.auth && req.test.createdBy._id == req.auth._id;
+    req.goal && req.auth && req.goal.createdBy._id == req.auth._id;
   if (!hasAuthorization) {
     return res.status('403').json({
       error: 'User is not authorized',
@@ -82,11 +65,11 @@ const hasAuthorization = (req, res, next) => {
 
 const listByUser = async (req, res) => {
   try {
-    let tests = await Test.find({ createdBy: req.params.userId })
+    let goals = await Goal.find({ createdBy: req.params.userId })
       .populate('createdBy', '_id name')
       .sort('-created')
       .exec();
-    res.json(tests);
+    res.json(goals);
   } catch (err) {
     return res.status(400).json({
       error: errorHandler.getErrorMessage(err),
@@ -99,5 +82,5 @@ export default {
   remove,
   hasAuthorization,
   listByUser,
-  testByID,
+  goalByID,
 };
