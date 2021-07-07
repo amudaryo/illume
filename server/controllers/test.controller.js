@@ -2,22 +2,6 @@ import Test from '../models/test.model';
 import errorHandler from './../helpers/dbErrorHandler';
 import formidable from 'formidable';
 
-// const create = async (req, res) => {
-//   console.log(req.body);
-//   try {
-//     req.body.createdBy = req.auth._id;
-//     const test = new Test(req.body);
-//     await test.save();
-//     return res.status(200).json({
-//       message: 'test created!',
-//     });
-//   } catch (err) {
-//     return res.status(400).json({
-//       error: errorHandler.getErrorMessage(err),
-//     });
-//   }
-// };
-
 const create = (req, res, next) => {
   let form = new formidable.IncomingForm();
   form.keepExtensions = true;

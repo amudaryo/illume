@@ -47,7 +47,8 @@ const useStyles = makeStyles((theme) => ({
 export default function NewTest(props) {
   const classes = useStyles();
   const [values, setValues] = useState({
-    text: '',
+    text1: '',
+    text2: '',
     error: '',
     user: {},
   });
@@ -55,9 +56,16 @@ export default function NewTest(props) {
   useEffect(() => {
     setValues({ ...values, user: auth.isAuthenticated().user });
   }, []);
-  const clickTest = () => {
+
+  const clickTest = async () => {
+    if (values.text1) await createTest('text1');
+    if (values.text2) await createTest('text2');
+    if (values.text3) await createTest('text3');
+  };
+
+  const createTest = async (name) => {
     let testData = new FormData();
-    testData.append('text', values.text);
+    testData.append('text', values[name]);
     create(
       {
         userId: jwt.user._id,
@@ -69,15 +77,19 @@ export default function NewTest(props) {
     ).then((data) => {
       if (data.error) {
         setValues({ ...values, error: data.error });
+        return data;
       } else {
-        setValues({ ...values, text: '' });
+        setValues({ ...values, [name]: '' });
         props.addUpdate(data);
+        console.log(data);
+        return data;
       }
     });
   };
-  const handleChange = () => (event) => {
+
+  const handleChange = (name) => (event) => {
     const value = event.target.value;
-    setValues({ ...values, text: value });
+    setValues({ ...values, [name]: value });
   };
   return (
     <div className={classes.root}>
@@ -87,8 +99,46 @@ export default function NewTest(props) {
             placeholder="Write something ..."
             multiline
             rows="3"
-            value={values.text}
-            onChange={handleChange()}
+            value={values.text1}
+            onChange={handleChange('text1')}
+            className={classes.textField}
+            margin="normal"
+          />
+          {values.error && (
+            <Typography component="p" color="error">
+              <Icon color="error" className={classes.error}>
+                error
+              </Icon>
+              {values.error}
+            </Typography>
+          )}
+        </CardContent>
+        <CardContent className={classes.cardContent}>
+          <TextField
+            placeholder="Write something ..."
+            multiline
+            rows="3"
+            value={values.text2}
+            onChange={handleChange('text2')}
+            className={classes.textField}
+            margin="normal"
+          />
+          {values.error && (
+            <Typography component="p" color="error">
+              <Icon color="error" className={classes.error}>
+                error
+              </Icon>
+              {values.error}
+            </Typography>
+          )}
+        </CardContent>
+        <CardContent className={classes.cardContent}>
+          <TextField
+            placeholder="Write something ..."
+            multiline
+            rows="3"
+            value={values.text3}
+            onChange={handleChange('text3')}
             className={classes.textField}
             margin="normal"
           />
@@ -105,7 +155,7 @@ export default function NewTest(props) {
           <Button
             color="primary"
             variant="contained"
-            disabled={values.text === ''}
+            disabled={(values.text1 === '') & (values.text2 === '')}
             onClick={clickTest}
             className={classes.submit}
           >
